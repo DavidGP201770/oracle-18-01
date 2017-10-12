@@ -1,0 +1,56 @@
+--clase de hoy 7 de Octubre
+
+create table almacen(numero_almacen Integer, 
+            ubicacion_almacen varchar2(80),
+            constraint pk_na primary key(numero_almacen)        
+            );
+            
+
+--Vamos a generar un procedimiento almacenado para guardar una entidad o registro de tipo almacen
+
+create or replace procedure guardar_almacen(mi_id IN integer,
+                            mi_ubicacion IN varchar2)
+                            as
+                            begin
+                            --Aqui viene la logica del procedimiento
+                        insert into almacen values (mi_id, mi_ubicacion);
+                        end;
+                        /
+                        
+          --Vamos a probar que funciona nuestro procedimiento
+          begin
+          GUARDAR_ALMACEN(1,'PLYMOUTH');
+          end;
+          /
+          
+          SELECT * FROM almacen;
+          
+          -- TABLA VENDENDOR
+          
+          CREATE TABLE VENDEDOR (NUMERO_VENDEDOR INTEGER,
+                                 NOMBRE_VENDEDOR VARCHAR2(60),
+                                 AREA_VENTAS VARCHAR2(60),
+                                 CONSTRAINT PK_NV PRIMARY KEY(NUMERO_VENDEDOR)
+                                 );
+                                 
+                                 DESCRIBE VENDEDOR;
+                                 
+          --TABLA CLIENTE
+          CREATE TABLE CLIENTE (NUMERO_CLIENTE INTEGER,
+                                NUMERO_ALMACEN INTEGER,
+                                NOMBRE_CLIENTE VARCHAR(60),
+                                CONSTRAINT PK_NC PRIMARY KEY(NUMERO_CLIENTE),
+                                CONSTRAINT FK1_NA FOREIGN KEY(NUMERO_ALMACEN)
+                                REFERENCES ALMACEN(NUMERO_ALMACEN)
+                                );
+          --TABLA VENTAS
+          create table Ventas (ID_Ventas Integer,
+                       Numero_Cliente Integer,
+                       Numero_Vendedor Integer,
+                       Monto_Venta float(126),
+                       Constraint PK_IDVv1 Primary key(ID_Ventas),
+                       Constraint fk_NC foreign key (Numero_Cliente) references Cliente(Numero_Cliente),
+                       Constraint fk_NV foreign key (Numero_Vendedor) references Vendedor(Numero_Vendedor)
+                       );
+                        
+                        
