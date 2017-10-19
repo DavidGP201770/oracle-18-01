@@ -1,0 +1,136 @@
+
+create table USUARIO_X(ID INTEGER PRIMARY KEY,
+                        NOMBRE VARCHAR2(40),
+                        EDAD INTEGER);
+                        
+                        INSERT INTO USUARIO_X VALUES(1,'URIEL',20);
+                        INSERT INTO USUARIO_X VALUES(2,'DAVID',20);
+                        INSERT INTO USUARIO_X VALUES(3,'KAREN',21);
+                        INSERT INTO USUARIO_X VALUES(4,'LILIAN',21);
+                        
+                        SELECT * FROM USUARIO_X;
+                        SET SERVEROUTPUT ON; --IMPRIME COSAS EN LA CONSOLA, PONE MODO DE COMPILACION O DEPURACION
+                        
+                        --Cursor Implicito
+                        DECLARE 
+                        CURSOR cur_1 IS SELECT * FROM USUARIO_X;
+                        BEGIN
+                        --LOGICA DEL CURSOR
+                        FOR FILA IN cur_1 LOOP --DEPOSITARA EL DATO
+                        DBMS_OUTPUT.PUT_LINE('El NOMBRE ACTUAL ES '||FILA.NOMBRE); --IMPRIME EL DATO con los registros y su mensaje
+                        END LOOP;
+                        END;
+                        /
+                        
+                        
+                        --Ejercicio2
+                        --Generar un cursor que contenga una variable interna y que realice la siguiente operacion si la edad es estrictamente mayor
+                        --a 30, asignar sueldo_base un factor de 1.5 y si es menor, no asignar el factor sueldo_base=6000 pesos
+                        
+                        DECLARE
+                        CURSOR CUR_2 IS SELECT* FROM USUARIO_X;
+                        SUELDO_BASE INTEGER;
+                        BEGIN
+                        --INCIALIZAMOS EL SUELDO_BASE
+                        
+                        FOR FILA IN CUR_2 LOOP
+                        SUELDO_BASE:=6000;
+                        IF FILA.EDAD >30 THEN
+                        SUELDO_BASE:=SUELDO_BASE*1.5;
+                        END IF;
+                        DBMS_OUTPUT.PUT_LINE('EL SUELDO ES '|| SUELDO_BASE || ' EDAD: '||FILA.EDAD);
+                        END LOOP;
+                        END;
+                        /
+                        
+                        
+--Creamos l SIGUIENTE TABLA
+
+CREATE TABLE CARTERA_CLIENTES(ID INTEGER PRIMARY KEY, NOMBRE VARCHAR2(40),
+                              EDAD INTEGER, SUELDO_BASE FLOAT);
+                              
+--iNSERTAMOS DATOS
+
+INSERT INTO CARTERA_CLIENTES VALUES (1,'JUAN',25,6000);
+INSERT INTO CARTERA_CLIENTES VALUES (2,'URIEL',50,9000);
+INSERT INTO CARTERA_CLIENTES VALUES (3,'DAVID',42,7000);
+INSERT INTO CARTERA_CLIENTES VALUES (4,'JOSE',16,7000);
+INSERT INTO CARTERA_CLIENTES VALUES (5,'KARLA',22,3000);
+
+SELECT *FROM CARTERA_CLIENTES;
+
+DECLARE
+SUELDO FLOAT;
+PAGO_NOMINA FLOAT;
+
+BEGIN
+
+--DECLARAMOS EL CURSOR IMPLICITO
+
+SELECT SUELDO_BASE INTO SUELDO FROM CARTERA_CLIENTES ; -- CURSOR
+PAGO_NOMINA:=SUELDO*20;
+DBMS_OUTPUT.PUT_LINE('EL PAGO ES '||PAGO_NOMINA);
+
+END;
+/
+
+-- SE COMPRUEBA QUITANDO EL WHERE ID=3 Y DA MULTIPLES OCURRENCIAS
+
+SET SERVEROUTPUT ON;
+
+--EJERCICIO2
+
+--AUTOINCREMENTE ES DE BAJO PERFORMANCE, NO EXISTE EN ORACLE, SE REEMPLAZA POR UN CURSOR, SECUENCIA :V
+
+-- 1) CREAR TABLA, 2) CREAR SECUENCIA, 3) CREAR SP DE INSERCION PARA LIGAR LA TABLA A LA SECUENCIA
+
+-- 1)
+
+CREATE TABLE NOMINA (ID_NOMINA INTEGER PRIMARY KEY, NOMBRE VARCHAR2(60));
+-- 2)
+
+CREATE SEQUENCE SEC_NOMINAS
+START WITH 1
+INCREMENT BY 2
+NOMAXVALUE;
+
+-- 3) EL NUMERO DE ARGUMENTOS TANTOS COMO TENGAS EN TU TABLA Y SIEMPRE SON IN 
+-- EL ARGUMENTO DE PK SIEMPRE ES DE TIPO OUT
+-- LOS TIPOS DEBEN DE COINCIDIR CON EL TIPO DE DATO DE LA COLUMNA PERO SIN REPETIR LOS NOMBRES Y EN EL MISMO ORDEN    
+
+CREATE OR REPLACE PROCEDURE GUARDAR_NOMINA(MY_ID OUT INTEGER, 
+MY_NOMBRE IN VARCHAR2)
+AS
+BEGIN
+SELECT SEC_NOMINAS.NEXTVAL INTO MY_ID FROM DUAL;
+INSERT INTO NOMINA VALUES (MY_ID,MY_NOMBRE);
+END;            
+/
+
+--PROBAR PROCEDIMIENTO
+--BLOQUE PL/SQL
+
+DECLARE 
+VALOR INTEGER;
+BEGIN
+GUARDAR_NOMINA(VALOR,'JUAN');
+SYS.DBMS_OUTPUT.PUT_LINE('EL PK ES '||VALOR);
+END;
+/
+
+SELECT * FROM NOMINA;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
